@@ -25,7 +25,7 @@ public class Main {
         */
 
 
-        a.unMetodo((variable) -> {System.out.println("abcd"); return true;});
+        //a.unMetodo((variable) -> {System.out.println("abcd"); return true;});
 
         /*Error de ambiguedad:
         La lambda recibe un parámetro y retorna boolean, por lo que podría

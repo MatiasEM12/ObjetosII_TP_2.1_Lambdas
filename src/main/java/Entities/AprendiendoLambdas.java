@@ -15,4 +15,5 @@ public class AprendiendoLambdas {
         d.metodo(10L);
     }
 
+
 }
