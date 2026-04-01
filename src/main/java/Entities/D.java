@@ -1,6 +1,6 @@
 package Entities;
 
-public interface InterfaceD <T, R>{
+public interface D<T, R>{
 
     R metodo(T c);
 }

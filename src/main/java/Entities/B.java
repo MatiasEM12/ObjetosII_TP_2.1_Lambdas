@@ -1,6 +1,6 @@
 package Entities;
 
-public interface InterfaceB {
+public interface B {
 
     void metodo(String b);
 }

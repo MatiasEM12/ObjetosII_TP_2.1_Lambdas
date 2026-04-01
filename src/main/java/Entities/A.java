@@ -1,5 +1,5 @@
 package Entities;
 
-public interface InterfaceA {
+public interface A {
     void metodo();
 }
