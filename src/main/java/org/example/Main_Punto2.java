@@ -13,7 +13,7 @@ public class Main_Punto2 {
         );
 
         //b) true si el String comienza con "a" minuscula, false si no
-        a.unMetodo((String c)->{ return c.charAt(0) }  );
+        a.unMetodo((String c)->{ return c.startsWith("a"); }  );
 
     }
 }
