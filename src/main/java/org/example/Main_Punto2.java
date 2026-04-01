@@ -12,6 +12,8 @@ public class Main_Punto2 {
         a.unMetodo((String c) ->{ return c.length()%2==0; }
         );
 
+        //b) true si el String comienza con "a" minuscula, false si no
+        a.unMetodo((String c)->{ return c.charAt(0) }  );
 
     }
 }
