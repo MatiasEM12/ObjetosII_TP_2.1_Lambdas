@@ -16,17 +16,16 @@ public class Productos {
         this.productos = productos;
     }
 
-    private <T>T ejecutarConPermiso(Supplier<T> runnable, Predicate<T> validacion){
-        if (validacion.test()) {
+    private <T>T ejecutarConPermiso(Supplier<Boolean> checkPermiso, Supplier<T> supplier){
+        if (!checkPermiso.get()) {
             throw new RuntimeException(SIN_PERMISOS);
         }
-        return runnable.get();
+        return supplier.get();
 
     }
     public void addProducto(String userId, Producto producto) {
 
-        this.ejecutarConPermiso(()->this.productos.add(producto),()-> this.security.checkAddPermission(userId));
-
+        this.ejecutarConPermiso(()->this.security.checkAddPermission(userId),()->this.productos.add(producto));
         /* if (!this.security.checkAddPermission(userId)) {
             throw new RuntimeException(SIN_PERMISOS);
         }
@@ -34,7 +33,7 @@ public class Productos {
     }
 
     public void removeProducto(String userId, Producto producto) {
-      this.ejecutarConPermiso(()->this.productos.remove(producto),()->this.security.checkRemovePermission(userId));
+      this.ejecutarConPermiso(()->this.security.checkRemovePermission(userId),()->this.productos.remove(producto));
 
         /*  if (!this.security.checkRemovePermission(userId)) {
             throw new RuntimeException(SIN_PERMISOS);
@@ -44,8 +43,8 @@ public class Productos {
 
     public List<Producto> listAll(String userId) {
 
-        return this.ejecutarConPermiso( ()->Collections.unmodifiableList(this.productos),
-                ()-> this.security.checkListPermission(userId) );
+        return this.ejecutarConPermiso( ()->this.security.checkListPermission(userId),
+                ()->Collections.unmodifiableList(this.productos));
 
         /*if (!this.security.checkListPermission(userId)) {
             throw new RuntimeException(SIN_PERMISOS);
