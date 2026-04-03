@@ -3,6 +3,8 @@ package Refactorizacion_Punto6;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class Productos {
     public static final String SIN_PERMISOS = "No tiene los permisos necesarios";
@@ -14,25 +16,41 @@ public class Productos {
         this.productos = productos;
     }
 
-    public void addProducto(String userId, Producto producto) {
-        if (!this.security.checkAddPermission(userId)) {
+    private <T>T ejecutarConPermiso(Supplier<T> runnable, Predicate<T> validacion){
+        if (validacion.test()) {
             throw new RuntimeException(SIN_PERMISOS);
         }
-        this.productos.add(producto);
+        return runnable.get();
+
+    }
+    public void addProducto(String userId, Producto producto) {
+
+        this.ejecutarConPermiso(()->this.productos.add(producto),()-> this.security.checkAddPermission(userId));
+
+        /* if (!this.security.checkAddPermission(userId)) {
+            throw new RuntimeException(SIN_PERMISOS);
+        }
+        this.productos.add(producto);*/
     }
 
     public void removeProducto(String userId, Producto producto) {
-        if (!this.security.checkRemovePermission(userId)) {
+      this.ejecutarConPermiso(()->this.productos.remove(producto),()->this.security.checkRemovePermission(userId));
+
+        /*  if (!this.security.checkRemovePermission(userId)) {
             throw new RuntimeException(SIN_PERMISOS);
         }
-        this.productos.remove(producto);
+        this.productos.remove(producto);*/
     }
 
     public List<Producto> listAll(String userId) {
-        if (!this.security.checkListPermission(userId)) {
+
+        return this.ejecutarConPermiso( ()->Collections.unmodifiableList(this.productos),
+                ()-> this.security.checkListPermission(userId) );
+
+        /*if (!this.security.checkListPermission(userId)) {
             throw new RuntimeException(SIN_PERMISOS);
         }
-        return Collections.unmodifiableList(this.productos);
+        return Collections.unmodifiableList(this.productos);*/
     }
 
     int cantidad() {
