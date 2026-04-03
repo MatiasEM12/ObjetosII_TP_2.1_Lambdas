@@ -19,16 +19,17 @@ public class Usuarios {
         this.jdbcUrl = jdbcUrl;
     }
 
-    private void coneccion(Consumer criterio, String SQL, String accion){
+    private void coneccion(Consumer <PreparedStatement>criterio, String SQL, String accion){
 
 
         try (Connection connection = DriverManager.getConnection(this.jdbcUrl);
              PreparedStatement statement = connection.prepareStatement(SQL)) {
             connection.setAutoCommit(false);
 
-            criterio.run(statement);
 
-            System.out
+            criterio.accept(statement);
+
+
 
             try {
                 statement.executeUpdate();
@@ -45,8 +46,14 @@ public class Usuarios {
 
 
     public void insertar(String nombre, String email) {
-//        this.coneccion( (statement)-> {  statement.setString(1, nombre);
-//            statement.setString(2, email);},"INSERT INTO usuarios (nombre, email) VALUES (?, ?)", INSERTAR );
+       this.coneccion( (statement)-> {
+           try {
+               statement.setString(1, nombre);
+               statement.setString(2, email);
+           } catch (SQLException e) {
+               throw new RuntimeException(e);
+           }
+           },"INSERT INTO usuarios (nombre, email) VALUES (?, ?)", INSERTAR );
 
 
         /*try (Connection connection = DriverManager.getConnection(this.jdbcUrl);
@@ -68,8 +75,14 @@ public class Usuarios {
 
     public void actualizarEmail(int id, String nuevoEmail) {
 
-        this.coneccion( ()-> {  statement.setString(1, nuevoEmail);
-            statement.setInt(2, id);},"UPDATE usuarios SET email = ? WHERE id = ?", ACTUALIZAR );
+        this.coneccion( (statement)-> {
+            try {
+                statement.setString(1, nuevoEmail);
+                statement.setInt(2, id);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            },"UPDATE usuarios SET email = ? WHERE id = ?", ACTUALIZAR );
 
         /*try (Connection connection = DriverManager.getConnection(this.jdbcUrl);
              PreparedStatement statement = connection.prepareStatement("UPDATE usuarios SET email = ? WHERE id = ?")) {
